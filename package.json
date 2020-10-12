@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node -e \"(async () => console.log(await require('./index').handler({ip:'8.8.8.8'})))();\""
+    "test": "jest"
   },
   "keywords": [],
   "author": "",

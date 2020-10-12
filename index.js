@@ -1,9 +1,9 @@
 const axios = require('axios');
-const config = require('config');
+const config = require('./config');
 
-const WhoIsAPIKey = config.get('apikeys.whois');
-const VirusTotalAPIKey = config.get('apikeys.virustotal');
-const GeoDataAPIKey = config.get('apikeys.geodata');
+let WhoIsAPIKey = config.apikeys.whois;
+let VirusTotalAPIKey = config.apikeys.virustotal;
+let GeoDataAPIKey = config.apikeys.geodata;
 
 async function getWhois(ip) {
     let result = {};
@@ -50,16 +50,23 @@ async function getVirusTotal(ip) {
     return result;
 }
 
-async function getResults({ip}) {
-    return [
-        ['whois', await getWhois(ip)],
-        ['geo', await getGeoData(ip)],
-        ['virustotal', await getVirusTotal(ip)]
-    ]
+async function getResults(event) {
+    let result = [];
+    if (event.ip) {
+        if (event.whois) {
+            result.push(['whois', await getWhois(event.ip)]);
+        }
+        if (event.geodata) {
+            result.push(['geo', await getGeoData(event.ip)]);
+        }
+        if (event.virustotal) {
+            result.push(['virustotal', await getVirusTotal(event.ip)]);
+        }
+    }
+    return result;
 }
 
 const main = event => {
-    console.log('Event: ', event);
     if (event === undefined)
         return null;
     return getResults(event);

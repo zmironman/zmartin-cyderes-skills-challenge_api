@@ -1,9 +1,8 @@
 const axios = require('axios');
-const config = require('./config');
 
-let WhoIsAPIKey = config.apikeys.whois;
-let VirusTotalAPIKey = config.apikeys.virustotal;
-let GeoDataAPIKey = config.apikeys.geodata;
+let WhoIsAPIKey = process.env.whoiskey;
+let VirusTotalAPIKey = process.env.virustotalkey;
+let GeoDataAPIKey = process.env.geodatakey;
 
 async function getWhois(ip) {
     let result = {};
@@ -25,6 +24,10 @@ async function getGeoData(ip) {
     let result = {};
     await axios.get(`http://api.ipstack.com/${ip}?access_key=${GeoDataAPIKey}`)
         .then(response => {
+                if(response.success === false){
+                    console.error(response.data.error);
+                    result = null;
+                }
                 result = response.data;
             }
         )
@@ -54,13 +57,13 @@ async function getResults(event) {
     let result = [];
     if (event.ip) {
         if (event.whois) {
-            result.push(['whois', await getWhois(event.ip)]);
+            result.push(['Whois', await getWhois(event.ip)]);
         }
         if (event.geodata) {
-            result.push(['geo', await getGeoData(event.ip)]);
+            result.push(['Geodata', await getGeoData(event.ip)]);
         }
         if (event.virustotal) {
-            result.push(['virustotal', await getVirusTotal(event.ip)]);
+            result.push(['Virus Total', await getVirusTotal(event.ip)]);
         }
     }
     return result;

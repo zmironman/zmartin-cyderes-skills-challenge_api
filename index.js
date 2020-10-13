@@ -56,13 +56,13 @@ async function getVirusTotal(ip) {
 async function getResults(event) {
     let result = [];
     if (event.ip) {
-        if (event.whois) {
+        if (event.whois === 'true') {
             result.push(['Whois', await getWhois(event.ip)]);
         }
-        if (event.geodata) {
+        if (event.geodata === 'true') {
             result.push(['Geodata', await getGeoData(event.ip)]);
         }
-        if (event.virustotal) {
+        if (event.virustotal === 'true') {
             result.push(['Virus Total', await getVirusTotal(event.ip)]);
         }
     }
